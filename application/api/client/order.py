@@ -73,3 +73,5 @@ def orderGet():
 
     return jsonify(order_serialized)
     
+# def confirmOrder():
+    

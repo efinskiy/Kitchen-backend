@@ -15,8 +15,8 @@ def settingsGet():
         })
 
 def statusGet():
-    if q:=Settings.query.filter_by(key='kitchenStatus'):
-        return jsonify(serialize_query_w0_dumps(q))
+    if q:=Settings.query.filter_by(key='kitchenStatus').first():
+        return jsonify(q.as_dict())
     else:
         return jsonify({
             'key': 'kitchenStatus',
