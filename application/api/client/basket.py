@@ -14,9 +14,29 @@ def getBasket():
         return jsonify(return_kr(kr.PARSE_ERROR))
     
     db_items = serialize_query_w0_dumps(Basket.query.filter_by(cust_id=basketUserId).all())
-    return jsonify({
-        'items': db_items
-    })
+    basket = {
+        'items': [],
+        'len': 0,
+        'total': 0
+        }
+    blen = 0
+    btotal = 0
+
+    for item in db_items:
+        i = Menu.query.get(item["item"])
+        btotal += i.price * item['amount']
+        blen += item['amount']
+        basket['items'].append({
+            'amount': item['amount'],
+            'name': i.name,
+            'img': i.img,
+            'itemid': i.id
+        })
+
+    basket['len'] = blen
+    basket['total'] = round(btotal, 2)
+
+    return jsonify(basket)
 
 def patchBasket():
     try:
@@ -70,3 +90,19 @@ def addProductToBasket():
         b = Basket(cust_id=customer.id, item=item.id, amount=amount)
         db_commit(b)
         return jsonify({'new_amount': b.amount})
+
+
+def clear():
+    try:
+        userId = int(session['customer'])
+    except:
+        return jsonify(return_kr(kr.PARSE_ERROR))
+
+    items = Basket.query.filter_by(cust_id = userId).all()
+
+    for item in items: db.session.delete(item)
+    db.session.commit()
+
+    return jsonify({
+        'response': 200
+    })
