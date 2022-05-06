@@ -26,13 +26,13 @@ def checkCustomer():
     if q:=Settings.query.filter_by(key='kitchenStatus').first():
         current_app.logger.info(q.value)
         if q.value == "not_available":
-            if not "/api/v1/admin" in request.path:
+            if (not "/admin" in request.path) and (not "/status" in request.path):
                 return jsonify({
                 'key': 'kitchenStatus',
                 'value': 'not_available'
             })
     else:
-        if not "/api/v1/admin" in request.path:
+        if not "/admin" in request.path:
             return jsonify({
                 'key': 'kitchenStatus',
                 'value': 'not_available'
