@@ -1,6 +1,6 @@
 from ..utils import return_response, return_kr, serialize_query, db_commit, return_not_json, serialize_query_w0_dumps
 from ..utils import Kitchen_response as kr
-
+from sqlalchemy import asc
 
 from flask import jsonify, session, request
 from ...models import Basket, Menu, Customer
@@ -13,7 +13,7 @@ def getBasket():
     except: 
         return jsonify(return_kr(kr.PARSE_ERROR))
     
-    db_items = serialize_query_w0_dumps(Basket.query.filter_by(cust_id=basketUserId).all())
+    db_items = serialize_query_w0_dumps(Basket.query.filter_by(cust_id=basketUserId).order_by(asc(Basket.id)).all())
     basket = {
         'items': [],
         'len': 0,
@@ -30,13 +30,27 @@ def getBasket():
             'amount': item['amount'],
             'name': i.name,
             'img': i.img,
-            'itemid': i.id
+            'itemid': i.id,
+            'price': i.price
         })
 
     basket['len'] = blen
     basket['total'] = round(btotal, 2)
 
     return jsonify(basket)
+
+def getBalance():
+    try:
+        product = int(request.json['p'])
+    except:
+        return jsonify(return_kr(kr.PARSE_ERROR))  
+
+    if i:= Menu.query.filter_by(id=product).first():
+        return jsonify({
+            'amount': i.balance
+        })
+    else:
+        return jsonify(return_kr(kr.EMPTY))
 
 def patchBasket():
     try:

@@ -21,10 +21,10 @@ from .wrappers import is_admin, is_kitchen
 kitchen_api = Blueprint('kitchen_api', __name__)
 
 @kitchen_api.app_errorhandler(exceptions.MethodNotAllowed)
-def bp_handle_405(): return handlers.handle_method_not_allowed()
+def bp_handle_405(error): return handlers.handle_method_not_allowed()
 
-kitchen_api.app_errorhandler(exceptions.NotFound) 
-def bp_handle_404(): return handlers.handle_404()
+@kitchen_api.app_errorhandler(exceptions.NotFound) 
+def bp_handle_404(error): return handlers.handle_404()
 
 kitchen_api.before_app_request(handlers.checkCustomer)
 
@@ -33,6 +33,7 @@ kitchen_api.add_url_rule('/status', 'kitchenStatus', admin_settings.statusGet, m
 kitchen_api.add_url_rule('/basket', 'basketGet', client_basket.getBasket, methods=['GET'])
 kitchen_api.add_url_rule('/basket', 'basketPost', client_basket.addProductToBasket, methods=['POST'])
 kitchen_api.add_url_rule('/basket', 'basketPatch', client_basket.patchBasket, methods=['PATCH'])
+kitchen_api.add_url_rule('/basket/amount', 'basketAmountGet', client_basket.getBalance, methods=['POST'])
 kitchen_api.add_url_rule('/basket/clear', 'basketClear', client_basket.clear, methods=['GET'])
 
 kitchen_api.add_url_rule('/user', 'userGet', client_user.return_userid, methods=['GET'])

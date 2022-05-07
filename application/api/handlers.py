@@ -14,7 +14,7 @@ def handle_500(): return jsonify(return_kr(reason={'error': 'Internal server err
 def handle_404(): return jsonify(return_kr(kr.NOT_FOUND))
 
 def checkCustomer():
-    if 'customer' not in session:
+    if 'customer' not in session or not Customer.query.get(session['customer']):
         customer = Customer()
         db.session.add(customer)
         db.session.commit()
