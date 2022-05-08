@@ -128,6 +128,8 @@ class Order(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     customer_id = db.Column(db.Integer, db.ForeignKey(Customer.id))
+    payment_type = db.Column(db.Integer)
+    is_payed = db.Column(db.Boolean, default=False)
     confirmation_code = db.Column(db.Integer, nullable=False)
     items = db.Column(db.Text)
     ord_price = db.Column(db.Float, nullable = False)
