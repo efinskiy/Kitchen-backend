@@ -37,6 +37,7 @@ kitchen_api.add_url_rule('/basket/amount', 'basketAmountGet', client_basket.getB
 kitchen_api.add_url_rule('/basket/clear', 'basketClear', client_basket.clear, methods=['GET'])
 
 kitchen_api.add_url_rule('/user', 'userGet', client_user.return_userid, methods=['GET'])
+kitchen_api.add_url_rule('/user/recovery', 'userRecovery', client_user.recovery, methods=['GET'])
 
 kitchen_api.add_url_rule('/menu', 'menuGet', client_menu.getMenu, methods=['GET'])
 kitchen_api.add_url_rule('/menu/info', 'productInfo', client_menu.getProductInfo, methods=['GET'])
@@ -49,6 +50,7 @@ kitchen_api.add_url_rule('/orders', 'ordersGet', client_order.ordersGet, methods
 kitchen_api.add_url_rule('/admin/login', 'adminLogin', admin_auth.login, methods=['POST'])
 kitchen_api.add_url_rule('/admin/logout', 'adminLogout', is_kitchen(admin_auth.logout), methods=['POST'])
 kitchen_api.add_url_rule('/admin/user', 'adminNewUser', is_admin(admin_users.new_user), methods=['POST'])
+kitchen_api.add_url_rule('/admin/user/recovery', 'recoveryPOST', is_admin(admin_users.createRecoveryLink), methods=['POST'])
 kitchen_api.add_url_rule('/admin/whoami', 'whoami', admin_users.whoami, methods=['GET'])
 
 kitchen_api.add_url_rule('/admin/settings', 'settingsGet', is_admin(admin_settings.settingsGet), methods=['GET'])

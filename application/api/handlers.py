@@ -21,7 +21,7 @@ def checkCustomer():
         session['customer'] = str(customer.id)
         session.permanent = True
         current_app.logger.info("New user : {}".format(customer.id))
-    current_app.logger.info('Request from customer : id'+ session['customer'])
+    current_app.logger.info('Request from customer : id'+ str(session['customer']))
 
     if q:=Settings.query.filter_by(key='kitchenStatus').first():
         current_app.logger.info(q.value)

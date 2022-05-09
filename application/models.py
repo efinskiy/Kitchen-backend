@@ -45,6 +45,9 @@ class User(db.Model, UserMixin):
     is_kitchen = db.Column(db.Boolean)
     is_admin = db.Column(db.Boolean)
 
+    recovery = db.relationship('RecoveryLink', backref = 'userRef')
+
+
     # @property
     # def password(self):
     #     return "password hashed and not readable"
@@ -107,6 +110,8 @@ class Customer(db.Model):
     
     order = db.relationship('Order', backref='customer')
     basket = db.relationship('Basket', backref = 'customer')
+    recovery = db.relationship('RecoveryLink', backref = 'customerRef')
+
     
     def as_dict(self):
        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
@@ -150,3 +155,12 @@ class Sale(db.Model):
     discount = db.Column(db.Integer)
     expiring = db.Column(db.DateTime)
     disabled = db.Column(db.Boolean, default=False)
+
+class RecoveryLink(db.Model):
+    __tablename__ = 'recoverylinks'
+
+    id = db.Column(db.Integer, primary_key=True)
+    customer = db.Column(db.Integer, db.ForeignKey(Customer.id))
+    created_by = db.Column(db.Integer, db.ForeignKey(User.id))
+    is_used = db.Column(db.Boolean, default=False)
+    link = db.Column(db.String(64))

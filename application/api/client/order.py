@@ -1,6 +1,7 @@
 from dataclasses import replace
 from datetime import datetime as dt
 import json
+from sqlalchemy import desc
 from ...models import Basket, Menu, Order
 from ..utils import return_kr, serialize_query, db_commit, serialize_query_w0_dumps
 from ..utils import Kitchen_response as kr
@@ -38,7 +39,7 @@ def createOrder():
         ord_price=total, 
         payment_type = payment_type,
         is_payed = True if payment_type==0 else False,
-        status=0,
+        status=0 if payment_type==1 else 1,
         date=dt.now())
     
     db_commit(new_order)
@@ -54,7 +55,7 @@ def ordersGet():
         return jsonify(return_kr(kr.PARSE_ERROR))
     
     try:
-        orders = serialize_query_w0_dumps(Order.query.filter_by(customer_id = user).all())
+        orders = serialize_query_w0_dumps(Order.query.filter_by(customer_id = user).order_by(desc(Order.id)).all())
         for o in orders:
             orderItems = json.loads(o["items"].replace("'", '"'))
             replacebleItems = []
@@ -63,12 +64,13 @@ def ordersGet():
                 replacebleItems.append({
                     'id': k,
                     'title': i.name,
+                    'img': i.img,
                     'amount': v,
                     'summ': round(i.price*v, 2),
                     'price': i.price
                 })
             o["items"] = replacebleItems
-            if o['status'] == 0 or o['status'] == 2:
+            if o['status'] in [0, 1, 3, 4]:
                 o.pop('confirmation_code', None)
         return jsonify({
             "orders" : orders
