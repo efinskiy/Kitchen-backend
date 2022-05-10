@@ -61,6 +61,13 @@ class Kitchen_response:
         code = 505
         desc = 'Method not allowed'
 
+class Order_status:
+    not_payed = 0
+    wait_for_confirmation = 1
+    wait_for_recieve = 2
+    recieved = 3
+    canceled = 4
+
 
 def return_not_json(response, code=200):
     return Response(response=json.dumps(response), status=code)

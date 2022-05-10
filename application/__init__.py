@@ -9,6 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 from .configuration import CONFIG_APP_SECRET, CONFIG_DB_PATH
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
+import os
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -22,7 +23,8 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = CONFIG_DB_PATH
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=365*2)
-    app.config['SESSION_COOKIE_DOMAIN'] = ".dev.kitchen.evgeniy.host"
+    # app.config['UPLOAD_FOLDER'] = os.path.join(os.path.abspath(__file__)
+    app.config['SESSION_COOKIE_DOMAIN'] = "dev.kitchen.evgeniy.host"
     app.config['CORS_HEADERS'] = 'Content-Type'
     app.config['JSON_AS_ASCII'] = False
     app.secret_key = CONFIG_APP_SECRET

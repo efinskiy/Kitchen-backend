@@ -13,6 +13,7 @@ from .admin import settings as admin_settings
 from .admin import logs as admin_logs
 from .admin import auth as admin_auth
 from .admin import user as admin_users
+from .admin import order as admin_order
 
 from . import handlers as handlers
 
@@ -40,6 +41,7 @@ kitchen_api.add_url_rule('/user', 'userGet', client_user.return_userid, methods=
 kitchen_api.add_url_rule('/user/recovery', 'userRecovery', client_user.recovery, methods=['GET'])
 
 kitchen_api.add_url_rule('/menu', 'menuGet', client_menu.getMenu, methods=['GET'])
+kitchen_api.add_url_rule('/menu/img', 'menuImg', client_menu.preview_img, methods=['GET'])
 kitchen_api.add_url_rule('/menu/info', 'productInfo', client_menu.getProductInfo, methods=['GET'])
 
 kitchen_api.add_url_rule('/order', 'orderGet', client_order.orderGet, methods=['GET'])
@@ -56,6 +58,8 @@ kitchen_api.add_url_rule('/admin/whoami', 'whoami', admin_users.whoami, methods=
 kitchen_api.add_url_rule('/admin/settings', 'settingsGet', is_admin(admin_settings.settingsGet), methods=['GET'])
 kitchen_api.add_url_rule('/admin/settings', 'settingsPatch', is_admin(admin_settings.settingsSet), methods=['PATCH'])
 kitchen_api.add_url_rule('/admin/settings', 'settingsNew', is_admin(admin_settings.settingsNew), methods=['POST'])
+
+kitchen_api.add_url_rule('/admin/order/not_completed', 'getNotCompletedOrders', is_admin(admin_order.getNotCompleted), methods=['GET'])
 
 kitchen_api.add_url_rule('/admin/product/amount', 'adminProductAmount', is_kitchen(admin_product.product_updateAmount), methods=['PATCH'])
 kitchen_api.add_url_rule('/admin/product', 'adminProductCreate', is_kitchen(admin_product.product_create), methods=['POST'])

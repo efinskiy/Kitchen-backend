@@ -59,6 +59,7 @@ def ordersGet():
         for o in orders:
             orderItems = json.loads(o["items"].replace("'", '"'))
             replacebleItems = []
+            o['date'] = o['date'].strftime("%d/%m/%Y, %H:%M:%S")
             for k, v in orderItems.items():
                 i = Menu.query.get(int(k))
                 replacebleItems.append({
