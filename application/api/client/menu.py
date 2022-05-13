@@ -29,7 +29,6 @@ def getProductInfo():
     })
 
 def preview_img():
-    # return jsonify({'req' : int(request.args.get('p'))})
     if 'p' in request.args:
         try:
             p_id = int(request.args.get('p'))

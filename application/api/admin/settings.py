@@ -7,11 +7,20 @@ from ..utils import Kitchen_response as kr
 # QA - OK
 
 def settingsGet():
-    q = Settings.query.all()
+    q = serialize_query_w0_dumps(Settings.query.all())
     if not q:
-        q = []
+        return jsonify({'settings': []})
+
+    
+    settings = {}
+    for setting in q:
+        settings[setting['key']] = {
+         'id': setting['id'],
+         'key': setting['key'],
+         'value': setting['value']   
+        }
     return jsonify({
-        'settings': serialize_query_w0_dumps(q)
+        'settings': settings
         })
 
 def statusGet():

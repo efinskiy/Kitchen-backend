@@ -1,3 +1,4 @@
+from email.policy import default
 import sqlalchemy
 from sqlalchemy.orm import backref
 from . import db
@@ -128,6 +129,17 @@ class Basket(db.Model):
     def as_dict(self):
        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
+class CancelReason(db.Model):
+    __tablename__ = 'cancelreasons'
+
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.String(100))
+    isAdminReason = db.Column(db.Boolean, default=True)
+    order = db.relationship('Order', backref = 'cancelReasonRef')
+
+    def as_dict(self):
+       return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 class Order(db.Model):
     __tablename__ = 'orders'
     
@@ -140,6 +152,7 @@ class Order(db.Model):
     ord_price = db.Column(db.Float, nullable = False)
     date = db.Column(db.DateTime)
     status = db.Column(db.Integer)
+    cancelReason = db.Column(db.Integer, db.ForeignKey(CancelReason.id))
 
     def as_dict(self):
        return {c.name: getattr(self, c.name) for c in self.__table__.columns}

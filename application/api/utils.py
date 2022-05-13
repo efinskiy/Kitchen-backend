@@ -47,7 +47,7 @@ class Kitchen_response:
     
     class NOT_ENOUGH_PERMISSIONS:
         code = 104
-        desc = "Not enough permissions"
+        desc = "Недостаточно прав для выполнения запроса"
     
     class NOT_ENOUGH:
         code = 201

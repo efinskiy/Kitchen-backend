@@ -14,6 +14,8 @@ from .admin import logs as admin_logs
 from .admin import auth as admin_auth
 from .admin import user as admin_users
 from .admin import order as admin_order
+from .admin import cancelReasons as admin_cancelReasons
+
 
 from . import handlers as handlers
 
@@ -21,13 +23,15 @@ from .wrappers import is_admin, is_kitchen
 
 kitchen_api = Blueprint('kitchen_api', __name__)
 
+from . import ws
+
 @kitchen_api.app_errorhandler(exceptions.MethodNotAllowed)
 def bp_handle_405(error): return handlers.handle_method_not_allowed()
 
 @kitchen_api.app_errorhandler(exceptions.NotFound) 
 def bp_handle_404(error): return handlers.handle_404()
 
-kitchen_api.before_app_request(handlers.checkCustomer)
+kitchen_api.before_request(handlers.checkCustomer)
 
 kitchen_api.add_url_rule('/status', 'kitchenStatus', admin_settings.statusGet, methods=['GET'])
 
@@ -46,7 +50,9 @@ kitchen_api.add_url_rule('/menu/info', 'productInfo', client_menu.getProductInfo
 
 kitchen_api.add_url_rule('/order', 'orderGet', client_order.orderGet, methods=['GET'])
 kitchen_api.add_url_rule('/order', 'orderPost', client_order.createOrder, methods=['POST'])
+kitchen_api.add_url_rule('/order/cancel', "orderCancel", client_order.orderCancel, methods=['POST'])
 kitchen_api.add_url_rule('/orders', 'ordersGet', client_order.ordersGet, methods=['GET'])
+kitchen_api.add_url_rule('/order/pay', 'orderPay', client_order.getPaymentLink, methods=['GET'])
 
 # ADMIN API
 kitchen_api.add_url_rule('/admin/login', 'adminLogin', admin_auth.login, methods=['POST'])
@@ -60,6 +66,10 @@ kitchen_api.add_url_rule('/admin/settings', 'settingsPatch', is_admin(admin_sett
 kitchen_api.add_url_rule('/admin/settings', 'settingsNew', is_admin(admin_settings.settingsNew), methods=['POST'])
 
 kitchen_api.add_url_rule('/admin/order/not_completed', 'getNotCompletedOrders', is_admin(admin_order.getNotCompleted), methods=['GET'])
+kitchen_api.add_url_rule('/admin/order/cancel', 'adminCancelOrder', is_admin(admin_order.cancelOrder), methods=['POST'])
+kitchen_api.add_url_rule('/admin/order/confirm', 'adminConfirmOrder', is_admin(admin_order.confirmOrder), methods=['POST'])
+kitchen_api.add_url_rule('/admin/order/close', 'adminCloseOrder', is_admin(admin_order.closeOrder), methods=['POST'])
+kitchen_api.add_url_rule('/admin/order/cancelReasons', 'cancelReasonsGet', is_admin(admin_cancelReasons.reasons_get), methods=['GET'])
 
 kitchen_api.add_url_rule('/admin/product/amount', 'adminProductAmount', is_kitchen(admin_product.product_updateAmount), methods=['PATCH'])
 kitchen_api.add_url_rule('/admin/product', 'adminProductCreate', is_kitchen(admin_product.product_create), methods=['POST'])

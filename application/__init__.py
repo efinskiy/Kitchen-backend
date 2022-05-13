@@ -9,10 +9,12 @@ from flask_sqlalchemy import SQLAlchemy
 from .configuration import CONFIG_APP_SECRET, CONFIG_DB_PATH
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
+from flask_socketio import SocketIO
 import os
 
 db = SQLAlchemy()
 migrate = Migrate()
+sock = SocketIO()
 
 def create_app():
     app = Flask(__name__, 
@@ -24,9 +26,11 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=365*2)
     # app.config['UPLOAD_FOLDER'] = os.path.join(os.path.abspath(__file__)
-    app.config['SESSION_COOKIE_DOMAIN'] = "dev.kitchen.evgeniy.host"
+    app.config['SESSION_COOKIE_DOMAIN'] = "stolovaya.online"
     app.config['CORS_HEADERS'] = 'Content-Type'
     app.config['JSON_AS_ASCII'] = False
+    app.config['SOCK_SERVER_OPTIONS'] = {'ping_interval': 25}
+    app.url_map.strict_slashes = False
     app.secret_key = CONFIG_APP_SECRET
 
     jwt = JWTManager(app)
@@ -45,6 +49,8 @@ def create_app():
 
     from .api.api import kitchen_api
     app.register_blueprint(kitchen_api)
+
     
+    sock.init_app(app, cors_allowed_origins="*")
     return app
 

@@ -2,11 +2,13 @@ from dataclasses import replace
 from datetime import datetime as dt
 import json
 from sqlalchemy import desc
-from ...models import Basket, Menu, Order
+from ...models import Basket, CancelReason, Menu, Order
 from ..utils import return_kr, serialize_query, db_commit, serialize_query_w0_dumps
 from ..utils import Kitchen_response as kr
+from ..utils import Order_status as status
 from ... import db
 from flask import jsonify, session, request
+from flask_login import current_user
 import random
 
 def createOrder():
@@ -97,5 +99,53 @@ def orderGet():
 
     return jsonify(order_serialized)
     
-# def confirmOrder():
+def orderCancel():
+    try:
+        orderId = int(request.json['oid'])
+        userId = int(session['customer'])
+    except:
+        return jsonify(return_kr(kr.PARSE_ERROR))
+
+    cancelReason = CancelReason.query.filter_by(text="Отменен покупателем").first()
+    if not (order:= Order.query.get(orderId)):
+        return jsonify(return_kr(kr.EMPTY))
+
+    if order.customer_id != userId:
+        return jsonify(return_kr(kr.NOT_ENOUGH_PERMISSIONS))
+
+    order.status = status.canceled
+    order.cancelReason = cancelReason.id
+
+    db_commit(order)
+
+    return jsonify({
+        'code': 200
+    })
+
+def getPaymentLink():
+    try:
+        orderId = int(request.args['oid'])
+        userId = int(session['customer'])
+    except:
+        return jsonify(return_kr(kr.PARSE_ERROR))
+
+    if not (order:= Order.query.get(orderId)):
+        return jsonify(return_kr(kr.EMPTY))
+    
+    if order.customer_id != userId:
+        return jsonify(return_kr(kr.NOT_ENOUGH_PERMISSIONS))
+    
+    if order.status != status.not_payed:
+        return jsonify(return_kr(kr.EXECUTION_ERROR))
+
+    # DEV ENV ONLY!!!
+    order.status = status.wait_for_confirmation
+    order.is_payed = True
+    db_commit(order)
+    # # # # # # # # # # # # # # # # # # # # 
+
+    return jsonify({
+        'url': 'https://google.com',
+        'code': 200
+    })
     

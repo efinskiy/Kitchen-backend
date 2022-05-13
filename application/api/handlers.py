@@ -21,10 +21,10 @@ def checkCustomer():
         session['customer'] = str(customer.id)
         session.permanent = True
         current_app.logger.info("New user : {}".format(customer.id))
-    current_app.logger.info('Request from customer : id'+ str(session['customer']))
+    current_app.logger.info(f'''id: {session["customer"]} X-REAL-IP: {request.headers['X-Real-Ip']}''')
 
     if q:=Settings.query.filter_by(key='kitchenStatus').first():
-        current_app.logger.info(q.value)
+        # current_app.logger.info(q.value)
         if q.value == "not_available":
             if (not "/admin" in request.path) and (not "/status" in request.path):
                 return jsonify({
