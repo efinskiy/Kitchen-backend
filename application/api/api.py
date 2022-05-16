@@ -61,15 +61,17 @@ kitchen_api.add_url_rule('/admin/user', 'adminNewUser', is_admin(admin_users.new
 kitchen_api.add_url_rule('/admin/user/recovery', 'recoveryPOST', is_admin(admin_users.createRecoveryLink), methods=['POST'])
 kitchen_api.add_url_rule('/admin/whoami', 'whoami', admin_users.whoami, methods=['GET'])
 
-kitchen_api.add_url_rule('/admin/settings', 'settingsGet', is_admin(admin_settings.settingsGet), methods=['GET'])
-kitchen_api.add_url_rule('/admin/settings', 'settingsPatch', is_admin(admin_settings.settingsSet), methods=['PATCH'])
+kitchen_api.add_url_rule('/admin/settings', 'settingsGet', is_kitchen(admin_settings.settingsGet), methods=['GET'])
+kitchen_api.add_url_rule('/admin/settings', 'settingsPatch', is_kitchen(admin_settings.settingsSet), methods=['PATCH'])
 kitchen_api.add_url_rule('/admin/settings', 'settingsNew', is_admin(admin_settings.settingsNew), methods=['POST'])
 
-kitchen_api.add_url_rule('/admin/order/not_completed', 'getNotCompletedOrders', is_admin(admin_order.getNotCompleted), methods=['GET'])
-kitchen_api.add_url_rule('/admin/order/cancel', 'adminCancelOrder', is_admin(admin_order.cancelOrder), methods=['POST'])
-kitchen_api.add_url_rule('/admin/order/confirm', 'adminConfirmOrder', is_admin(admin_order.confirmOrder), methods=['POST'])
-kitchen_api.add_url_rule('/admin/order/close', 'adminCloseOrder', is_admin(admin_order.closeOrder), methods=['POST'])
-kitchen_api.add_url_rule('/admin/order/cancelReasons', 'cancelReasonsGet', is_admin(admin_cancelReasons.reasons_get), methods=['GET'])
+kitchen_api.add_url_rule('/admin/order/not_completed', 'getNotCompletedOrders', is_kitchen(admin_order.getNotCompleted), methods=['GET'])
+kitchen_api.add_url_rule('/admin/order/history', 'getOrderHistory', is_kitchen(admin_order.historyGet), methods=['GET'])
+
+kitchen_api.add_url_rule('/admin/order/cancel', 'adminCancelOrder', is_kitchen(admin_order.cancelOrder), methods=['POST'])
+kitchen_api.add_url_rule('/admin/order/confirm', 'adminConfirmOrder', is_kitchen(admin_order.confirmOrder), methods=['POST'])
+kitchen_api.add_url_rule('/admin/order/close', 'adminCloseOrder', is_kitchen(admin_order.closeOrder), methods=['POST'])
+kitchen_api.add_url_rule('/admin/order/cancelReasons', 'cancelReasonsGet', is_kitchen(admin_cancelReasons.reasons_get), methods=['GET'])
 
 kitchen_api.add_url_rule('/admin/product/amount', 'adminProductAmount', is_kitchen(admin_product.product_updateAmount), methods=['PATCH'])
 kitchen_api.add_url_rule('/admin/product', 'adminProductCreate', is_kitchen(admin_product.product_create), methods=['POST'])

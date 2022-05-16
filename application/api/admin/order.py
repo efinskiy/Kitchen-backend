@@ -2,7 +2,7 @@ from flask import current_app, jsonify, request
 from ..utils import Order_status, return_response, return_kr, db_commit, serialize_query_w0_dumps
 from ..utils import Kitchen_response as kr
 from ..utils import Order_status as status
-from sqlalchemy import and_, desc
+from sqlalchemy import and_, desc, or_
 import json
 
 from ...models import CancelReason, Menu, Order
@@ -29,6 +29,27 @@ def getNotCompleted():
         'orders': notCompletedOrders
     })
 
+def historyGet():
+    historyOrders = serialize_query_w0_dumps(Order.query.filter(or_(Order.status == status.canceled, Order.status==status.recieved)).order_by(desc(Order.id)).all())
+    for o in historyOrders:
+            orderItems = json.loads(o["items"].replace("'", '"'))
+            replacebleItems = []
+            o['date'] = o['date'].strftime("%d/%m/%Y, %H:%M:%S")
+            for k, v in orderItems.items():
+                i = Menu.query.get(int(k))
+                replacebleItems.append({
+                    'id': k,
+                    'title': i.name,
+                    'img': i.img,
+                    'amount': v,
+                    'summ': round(i.price*v, 2),
+                    'price': i.price
+                })
+            o["items"] = replacebleItems
+
+    return jsonify({
+        'orders': historyOrders
+    })
 
 def cancelOrder():
     try:

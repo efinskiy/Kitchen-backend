@@ -1,3 +1,4 @@
+from flask_login import current_user
 from ...models import Settings
 from flask import request, jsonify
 from ..utils import return_kr, serialize_query, db_commit, serialize_query_w0_dumps
@@ -25,6 +26,11 @@ def settingsGet():
 
 def statusGet():
     if q:=Settings.query.filter_by(key='kitchenStatus').first():
+        if not current_user.is_anonymous:
+            return jsonify({
+                'key': 'kitchenStatus',
+                'value': 'available'
+            })
         return jsonify(q.as_dict())
     else:
         return jsonify({

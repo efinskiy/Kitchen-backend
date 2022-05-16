@@ -1,6 +1,7 @@
 # need for transformate to blueprint
 from .utils import return_kr, log_request
 from flask import session, current_app, jsonify, request
+from flask_login import current_user
 from .. import db
 from ..models import Customer, Settings
 from .utils import Kitchen_response as kr
@@ -26,11 +27,12 @@ def checkCustomer():
     if q:=Settings.query.filter_by(key='kitchenStatus').first():
         # current_app.logger.info(q.value)
         if q.value == "not_available":
-            if (not "/admin" in request.path) and (not "/status" in request.path):
-                return jsonify({
-                'key': 'kitchenStatus',
-                'value': 'not_available'
-            })
+            if current_user.is_anonymous:
+                if (not "/admin" in request.path) and (not "/status" in request.path):
+                    return jsonify({
+                    'key': 'kitchenStatus',
+                    'value': 'not_available'
+                })
     else:
         if not "/admin" in request.path:
             return jsonify({

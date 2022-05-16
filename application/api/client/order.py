@@ -139,9 +139,9 @@ def getPaymentLink():
         return jsonify(return_kr(kr.EXECUTION_ERROR))
 
     # DEV ENV ONLY!!!
-    order.status = status.wait_for_confirmation
-    order.is_payed = True
-    db_commit(order)
+    # order.status = status.wait_for_confirmation
+    # order.is_payed = True
+    # db_commit(order)
     # # # # # # # # # # # # # # # # # # # # 
 
     return jsonify({
