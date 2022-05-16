@@ -66,7 +66,7 @@ def createOrder():
     for item in basket_items: db.session.delete(item)
     db.session.commit()
 
-    return jsonify({'code': 200, 'oid': new_order.id})
+    return jsonify({'response': 200, 'oid': new_order.id})
 
 def ordersGet():
     try:
