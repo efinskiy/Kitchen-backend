@@ -55,11 +55,15 @@ class Kitchen_response:
 
     class NOT_FOUND: 
         code = 504
-        desc = 'Not found'
+        desc = 'Не найден'
     
     class METHOD_NOT_ALLOWED:
         code = 505
-        desc = 'Method not allowed'
+        desc = 'Метод не разрешен'
+    
+    class ORDERS_LIMIT_REACH:
+        code = 202
+        desc = "Достигнут лимит активных заказов"
 
 class Order_status:
     not_payed = 0

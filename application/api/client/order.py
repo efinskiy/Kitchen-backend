@@ -1,7 +1,7 @@
 from dataclasses import replace
 from datetime import datetime as dt
 import json
-from sqlalchemy import desc
+from sqlalchemy import desc, and_, or_
 from ...models import Basket, CancelReason, Menu, Order
 from ..utils import return_kr, serialize_query, db_commit, serialize_query_w0_dumps
 from ..utils import Kitchen_response as kr
@@ -19,6 +19,24 @@ def createOrder():
     except:
         return jsonify(return_kr(kr.PARSE_ERROR))
 
+    # BACKEND-4
+    try:
+        totalOrders = len(Order.query.filter(
+            and_(
+                Order.customer_id == user,
+                or_(
+                    Order.status == status.not_payed,
+                    Order.status == status.wait_for_confirmation,
+                    Order.status == status.wait_for_recieve
+                )
+            )
+        ).all())
+        if totalOrders >= 3:
+            return jsonify(return_kr(kr.ORDERS_LIMIT_REACH))
+    except Exception as e:
+        return jsonify({
+            'exception': e
+        })
 
     if basket_items:=Basket.query.filter_by(cust_id=user).all(): pass
     else: return jsonify(return_kr(kr.EMPTY))
