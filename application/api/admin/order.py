@@ -62,11 +62,12 @@ def cancelOrder():
         return jsonify(return_kr(kr.EMPTY))
     
     # https://tracker.yandex.ru/BACKEND-1
-    orderItems = json.loads(order.items.replace("'", '"'))
-    for k, v in orderItems.items():
-                i = Menu.query.get(int(k))
-                i.balance += int(v)
-                db_commit(i)
+    if order.status == status.wait_for_recieve:
+        orderItems = json.loads(order.items.replace("'", '"'))
+        for k, v in orderItems.items():
+                    i = Menu.query.get(int(k))
+                    i.balance += int(v)
+                    db_commit(i)
 
     cancelReason = CancelReason.query.get(reason)
     order.status = status.canceled
@@ -90,21 +91,17 @@ def confirmOrder():
 
     # https://tracker.yandex.ru/BACKEND-1
     lowBalance = []
-    sessionDump = None
     orderItems = json.loads(order.items.replace("'", '"'))
+    
     for k, v in orderItems.items():
                 i = Menu.query.get(int(k))
-                i.balance -= int(v)
-                if i.balance < 0 : lowBalance.append({
+                if i.balance - int(v) < 0 : lowBalance.append({
                     'item': i,
                     'before': i.balance + int(v),
                     'after': i.balance
                 })
-                db.session.add(i)
-                sessionDump = db.session
     
     if lowBalance:
-        db.session.flush() # clear session after lowbalance check
         order.status = status.canceled
         order.cancelReason = CancelReason.query.filter_by(text="Недостаточно товара").first().id
         db_commit(order)
@@ -119,8 +116,17 @@ def confirmOrder():
             "code": kr.NOT_ENOUGH.code,
             "items": items
         })
-
-    db.session = sessionDump
+    
+    for k, v in orderItems.items():
+                i = Menu.query.get(int(k))
+                i.balance -= int(v)
+                if i.balance < 0 : lowBalance.append({
+                    'item': i,
+                    'before': i.balance + int(v),
+                    'after': i.balance
+                })
+                db.session.add(i)
+    
     db.session.commit()
     
     order.status = status.wait_for_recieve
