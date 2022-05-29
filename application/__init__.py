@@ -14,7 +14,7 @@ import os
 
 db = SQLAlchemy()
 migrate = Migrate()
-sock = SocketIO()
+sock = SocketIO(cors_allowed_origins='*')
 
 def create_app():
     app = Flask(__name__, 

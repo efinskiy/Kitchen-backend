@@ -71,8 +71,14 @@ class Category(db.Model):
     title = db.Column(db.String(30))
     icon = db.Column(db.String(50))
     visible = db.Column(db.Boolean)
+    is_system = db.Column(db.Boolean, default=False)
+    is_default = db.Column(db.Boolean, default=False)
+    priority = db.Column(db.Integer, default=1)
     products = db.relationship('Menu', backref='cat')
     coupon = db.relationship('Coupon', backref='cat')
+
+    def as_dict(self):
+       return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 class Menu(db.Model):
     __tablename__ = 'menu'
@@ -84,6 +90,7 @@ class Menu(db.Model):
     price = db.Column(db.Float, nullable = False)
     balance = db.Column(db.Integer)
     category_id = db.Column(db.Integer, db.ForeignKey(Category.id))
+    sells = db.Column(db.Integer, default=0)
     basket = db.relationship('Basket', backref = 'menu')
     discount = db.relationship('Sale', backref= 'product')
 

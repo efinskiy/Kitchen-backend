@@ -6,6 +6,7 @@ from .client import basket as client_basket
 from .client import user as client_user
 from .client import menu as client_menu
 from .client import order as client_order
+from .client import categories as client_category
 
 from .admin import category as admin_category
 from .admin import product as admin_product
@@ -44,7 +45,9 @@ kitchen_api.add_url_rule('/basket/clear', 'basketClear', client_basket.clear, me
 kitchen_api.add_url_rule('/user', 'userGet', client_user.return_userid, methods=['GET'])
 kitchen_api.add_url_rule('/user/recovery', 'userRecovery', client_user.recovery, methods=['GET'])
 
-kitchen_api.add_url_rule('/menu', 'menuGet', client_menu.getMenu, methods=['GET'])
+kitchen_api.add_url_rule('/category', 'categoryGet', client_category.get, methods=["GET"])
+
+kitchen_api.add_url_rule('/menu', 'menuGet', client_menu.getMenu, methods=['POST'])
 kitchen_api.add_url_rule('/menu/img', 'menuImg', client_menu.preview_img, methods=['GET'])
 kitchen_api.add_url_rule('/menu/info', 'productInfo', client_menu.getProductInfo, methods=['GET'])
 
