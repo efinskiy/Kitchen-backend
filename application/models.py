@@ -80,6 +80,18 @@ class Category(db.Model):
     def as_dict(self):
        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
+    def avaliableOnly(self):
+        if self.title == "Популярное":
+            return True
+        if len(self.products) == 0:
+            return False
+        else:
+            for product in self.products:
+                if product.balance <= 0:
+                    return False
+            return True
+            
+
 class Menu(db.Model):
     __tablename__ = 'menu'
 

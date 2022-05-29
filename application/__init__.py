@@ -18,8 +18,8 @@ sock = SocketIO(cors_allowed_origins='*')
 
 def create_app():
     app = Flask(__name__, 
-            static_url_path='', 
-            static_folder='static',
+            static_url_path='/files', 
+            static_folder='product_imgs',
             template_folder='templates')
 
     app.config['SQLALCHEMY_DATABASE_URI'] = CONFIG_DB_PATH

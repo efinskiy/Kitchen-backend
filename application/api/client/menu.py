@@ -49,6 +49,7 @@ def getProductInfo():
         'data': product.as_dict()
     })
 
+# Deprecated, use /api/v1/files/{img_name}
 def preview_img():
     if 'p' in request.args:
         try:
@@ -59,6 +60,7 @@ def preview_img():
         return jsonify(return_kr(kr.EMPTY))
     
     if p:= Menu.query.get(p_id):
-        return send_from_directory('product_imgs', p.img, as_attachment=False)
+        return current_app.send_static_file(p.img)
+        # return send_from_directory('product_imgs', p.img, as_attachment=False)
     else:
-        return jsonify(return_kr(kr.EMPTY))
+        return jsonify(return_kr(kr.EMPTY)) 
