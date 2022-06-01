@@ -10,11 +10,13 @@ from .configuration import CONFIG_APP_SECRET, CONFIG_DB_PATH
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 from flask_socketio import SocketIO
+from flask_mail import Mail
 import os
 
 db = SQLAlchemy()
 migrate = Migrate()
 sock = SocketIO(cors_allowed_origins='*')
+mail = Mail()
 
 def create_app():
     app = Flask(__name__, 
@@ -30,6 +32,11 @@ def create_app():
     app.config['CORS_HEADERS'] = 'Content-Type'
     app.config['JSON_AS_ASCII'] = False
     app.config['SOCK_SERVER_OPTIONS'] = {'ping_interval': 25}
+    # app.config[''] = 
+    # app.config[''] = 
+    # app.config[''] = 
+
+    
     app.url_map.strict_slashes = False
     app.secret_key = CONFIG_APP_SECRET
 
@@ -38,6 +45,7 @@ def create_app():
     
     db.init_app(app)
     migrate.init_app(app, db)
+    mail.init_app(app)
 
     login_manager = LoginManager()
     login_manager.init_app(app)

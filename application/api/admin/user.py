@@ -1,6 +1,6 @@
 from flask import jsonify, request
 from flask_login import current_user
-from ...models import Customer, User, RecoveryLink
+from ...models import Customer, User
 from ..utils import db_commit, return_kr
 from ..utils import Kitchen_response as kr
 from werkzeug.security import generate_password_hash
@@ -57,14 +57,9 @@ def createRecoveryLink():
 
     if c:= Customer.query.get(customer):
         salt = bytes(int(datetime.now().timestamp()))
-        key = pbkdf2_hmac('sha256', bytes(c.id), salt, 10).hex()
-        new = RecoveryLink(
-            customer = c.id,
-            created_by = current_user.id,
-            is_used = False,
-            link = key
-        )
-        db_commit(new)
+        key = pbkdf2_hmac('sha256', bytes(c.id), salt, 1).hex()
+        c.recoveryLink = key
+        db_commit(c)
         return jsonify(
             {
                 'key': key

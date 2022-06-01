@@ -45,17 +45,6 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(100), nullable=False)
     is_kitchen = db.Column(db.Boolean)
     is_admin = db.Column(db.Boolean)
-
-    recovery = db.relationship('RecoveryLink', backref = 'userRef')
-
-
-    # @property
-    # def password(self):
-    #     return "password hashed and not readable"
-    
-    # @password.setter
-    # def password(self, passwd: str):
-    #     self.password = passwd
     
     def verify_password(self, password: str) -> bool:
         return check_password_hash(self.password, password)
@@ -127,11 +116,14 @@ class Customer(db.Model):
     __tablename__ = 'customers'
 
     id = db.Column(db.Integer, primary_key=True)
+    recoveryLink = db.Column(db.String(64))
+    name = db.Column(db.String(20))
+    email = db.Column(db.String(255))
+    confirmPolicy = db.Column(db.Boolean, default=False)
+    
     
     order = db.relationship('Order', backref='customer')
     basket = db.relationship('Basket', backref = 'customer')
-    recovery = db.relationship('RecoveryLink', backref = 'customerRef')
-
     
     def as_dict(self):
        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
@@ -187,12 +179,3 @@ class Sale(db.Model):
     discount = db.Column(db.Integer)
     expiring = db.Column(db.DateTime)
     disabled = db.Column(db.Boolean, default=False)
-
-class RecoveryLink(db.Model):
-    __tablename__ = 'recoverylinks'
-
-    id = db.Column(db.Integer, primary_key=True)
-    customer = db.Column(db.Integer, db.ForeignKey(Customer.id))
-    created_by = db.Column(db.Integer, db.ForeignKey(User.id))
-    is_used = db.Column(db.Boolean, default=False)
-    link = db.Column(db.String(64))

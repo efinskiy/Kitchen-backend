@@ -73,6 +73,9 @@ class Order_status:
     canceled = 4
 
 
+def email_sendRecovery(email, key):
+    pass
+
 def return_not_json(response, code=200):
     return Response(response=json.dumps(response), status=code)
 
