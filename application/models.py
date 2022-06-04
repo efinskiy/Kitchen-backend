@@ -70,15 +70,21 @@ class Category(db.Model):
        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
     def avaliableOnly(self):
+        avaliableProductCounter = 0
         if self.title == "Популярное":
             return True
         if len(self.products) == 0:
+            print('len == 0')
             return False
         else:
             for product in self.products:
-                if product.balance <= 0:
-                    return False
-            return True
+                if product.balance > 0:
+                    avaliableProductCounter +=1
+            
+            if avaliableProductCounter >=1:
+                return True
+            else:
+                return False
             
 
 class Menu(db.Model):
