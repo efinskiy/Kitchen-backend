@@ -32,9 +32,13 @@ def create_app():
     app.config['CORS_HEADERS'] = 'Content-Type'
     app.config['JSON_AS_ASCII'] = False
     app.config['SOCK_SERVER_OPTIONS'] = {'ping_interval': 25}
-    # app.config[''] = 
-    # app.config[''] = 
-    # app.config[''] = 
+    app.config['MAIL_SERVER'] = ''
+    app.config['MAIL_USE_TLS'] = True
+    app.config['MAIL_PORT'] = 465
+    app.config['MAIL_USERNAME'] = ''
+    app.config['MAIL_DEFAULT_SENDER'] = ''
+    app.config['MAIL_PASSWORD'] = ''
+
 
     
     app.url_map.strict_slashes = False
