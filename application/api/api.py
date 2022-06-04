@@ -43,6 +43,8 @@ kitchen_api.add_url_rule('/basket/amount', 'basketAmountGet', client_basket.getB
 kitchen_api.add_url_rule('/basket/clear', 'basketClear', client_basket.clear, methods=['GET'])
 
 kitchen_api.add_url_rule('/user', 'userGet', client_user.return_userid, methods=['GET'])
+kitchen_api.add_url_rule('/user/policy', 'getUserPolicy', client_user.policy_get, methods=['GET'])
+kitchen_api.add_url_rule('/user/policy', 'setUserPolicy', client_user.policy_confirm, methods=['POST'])
 kitchen_api.add_url_rule('/user/info', 'userInfoGet', client_user.returnInfo, methods=['GET'])
 kitchen_api.add_url_rule('/user/info', 'userInfoPost', client_user.updateInfo, methods=['POST'])
 kitchen_api.add_url_rule('/user/recovery/get', 'userGetRecoveryKey', client_user.returnKey, methods=['GET'])
