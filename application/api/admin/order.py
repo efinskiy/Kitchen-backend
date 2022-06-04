@@ -1,4 +1,5 @@
 from flask import current_app, jsonify, request
+from numpy import product
 from ..utils import Order_status, return_response, return_kr, db_commit, serialize_query_w0_dumps
 from ..utils import Kitchen_response as kr
 from ..utils import Order_status as status
@@ -6,6 +7,14 @@ from sqlalchemy import and_, desc, or_
 import json
 from ... import db
 from ...models import CancelReason, Menu, Order
+
+def parseOrder(order):
+    orderItems = json.loads(order.items.replace("'", '"'))
+    items = []
+    for k, v in orderItems.items():
+        items.append([Menu.query.get(int(k)), v])
+    return items
+
 
 def getNotCompleted():
     notCompletedOrders = serialize_query_w0_dumps(Order.query.filter(and_(Order.status != status.not_payed, Order.status<=status.wait_for_recieve)).order_by(desc(Order.id)).all())
@@ -148,7 +157,14 @@ def closeOrder():
 
     order.status = status.recieved
 
-    db_commit(order)
+    productItems = parseOrder(order)
+    
+    # increase selled value by item in order
+    for item in productItems:
+        item[0].sells =+ int(item[1])
+        db.session.add(item[0])
+    
+    db_commit(order) # this commit also commits productItems sells changes
 
     return jsonify({
         'code': 200
