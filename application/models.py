@@ -74,7 +74,6 @@ class Category(db.Model):
         if self.title == "Популярное":
             return True
         if len(self.products) == 0:
-            print('len == 0')
             return False
         else:
             for product in self.products:

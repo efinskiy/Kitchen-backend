@@ -6,50 +6,47 @@ from flask import Flask, session, jsonify
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-from .configuration import CONFIG_APP_SECRET, CONFIG_DB_PATH
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 from flask_socketio import SocketIO
-from flask_mail import Mail
+# from flask_mail import Mail
 import os
+import flask_monitoringdashboard as dashboard
 
 db = SQLAlchemy()
 migrate = Migrate()
 sock = SocketIO(cors_allowed_origins='*')
-mail = Mail()
+# mail = Mail()
 
 def create_app():
     app = Flask(__name__, 
             static_url_path='/files', 
             static_folder='product_imgs',
             template_folder='templates')
+    
+    app.config.from_prefixed_env()
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = CONFIG_DB_PATH
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("SQLALCHEMY_DATABASE_URI")
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = os.environ.get("SQLALCHEMY_TRACK_MODIFICATIONS")
     app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=365*2)
-    # app.config['UPLOAD_FOLDER'] = os.path.join(os.path.abspath(__file__)
     app.config['SESSION_COOKIE_DOMAIN'] = "stolovaya.online"
     app.config['CORS_HEADERS'] = 'Content-Type'
     app.config['JSON_AS_ASCII'] = False
     app.config['SOCK_SERVER_OPTIONS'] = {'ping_interval': 25}
-    app.config['MAIL_SERVER'] = ''
-    app.config['MAIL_USE_TLS'] = True
-    app.config['MAIL_PORT'] = 465
-    app.config['MAIL_USERNAME'] = ''
-    app.config['MAIL_DEFAULT_SENDER'] = ''
-    app.config['MAIL_PASSWORD'] = ''
+    app.secret_key = os.environ.get("APP_SECRET")
+    app.url_map.strict_slashes = False
 
 
     
-    app.url_map.strict_slashes = False
-    app.secret_key = CONFIG_APP_SECRET
 
     jwt = JWTManager(app)
     cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
     
     db.init_app(app)
     migrate.init_app(app, db)
-    mail.init_app(app)
+    # mail.init_app(app)
+    dashboard.bind(app)
+
 
     login_manager = LoginManager()
     login_manager.init_app(app)
