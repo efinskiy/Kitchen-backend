@@ -94,8 +94,10 @@ class Menu(db.Model):
     weight = db.Column(db.Integer)
     img = db.Column(db.String(50))
     price = db.Column(db.Float, nullable = False)
-    balance = db.Column(db.Integer)
+    balance = db.Column(db.Integer, default=0)
+    reserved = db.Column(db.Integer, default=0)
     category_id = db.Column(db.Integer, db.ForeignKey(Category.id))
+    archived = db.Column(db.Boolean, default=False)
     sells = db.Column(db.Integer, default=0)
     basket = db.relationship('Basket', backref = 'menu')
     discount = db.relationship('Sale', backref= 'product')
@@ -122,7 +124,7 @@ class Customer(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     recoveryLink = db.Column(db.String(64))
-    name = db.Column(db.String(20))
+    name = db.Column(db.String(50))
     email = db.Column(db.String(255))
     confirmPolicy = db.Column(db.Boolean, default=False)
     

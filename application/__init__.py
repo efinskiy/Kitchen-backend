@@ -12,6 +12,7 @@ from flask_socketio import SocketIO
 # from flask_mail import Mail
 import os
 import flask_monitoringdashboard as dashboard
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -35,7 +36,6 @@ def create_app():
     app.config['SOCK_SERVER_OPTIONS'] = {'ping_interval': 25}
     app.secret_key = os.environ.get("APP_SECRET")
     app.url_map.strict_slashes = False
-
 
     
 

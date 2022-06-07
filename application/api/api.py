@@ -53,7 +53,7 @@ kitchen_api.add_url_rule('/user/recovery', 'userRecovery', client_user.recovery,
 kitchen_api.add_url_rule('/category', 'categoryGet', client_category.get, methods=["GET"])
 
 kitchen_api.add_url_rule('/menu', 'menuGet', client_menu.getMenu, methods=['POST'])
-kitchen_api.add_url_rule('/menu/img', 'menuImg', client_menu.preview_img, methods=['GET'])
+# kitchen_api.add_url_rule('/menu/img', 'menuImg', client_menu.preview_img, methods=['GET'])
 kitchen_api.add_url_rule('/menu/info', 'productInfo', client_menu.getProductInfo, methods=['GET'])
 
 kitchen_api.add_url_rule('/order', 'orderGet', client_order.orderGet, methods=['GET'])
@@ -81,11 +81,17 @@ kitchen_api.add_url_rule('/admin/order/confirm', 'adminConfirmOrder', is_kitchen
 kitchen_api.add_url_rule('/admin/order/close', 'adminCloseOrder', is_kitchen(admin_order.closeOrder), methods=['POST'])
 kitchen_api.add_url_rule('/admin/order/cancelReasons', 'cancelReasonsGet', is_kitchen(admin_cancelReasons.reasons_get), methods=['GET'])
 
+kitchen_api.add_url_rule('/admin/products/list', 'adminProductsGet', is_kitchen(admin_product.product_list), methods=['POST'])
 kitchen_api.add_url_rule('/admin/product/amount', 'adminProductAmount', is_kitchen(admin_product.product_updateAmount), methods=['PATCH'])
 kitchen_api.add_url_rule('/admin/product', 'adminProductCreate', is_kitchen(admin_product.product_create), methods=['POST'])
 kitchen_api.add_url_rule('/admin/product', 'adminProductPatch', is_kitchen(admin_product.product_patch), methods=['PATCH'])
 
+kitchen_api.add_url_rule('/admin/utils/imgLoader', 'adminLoadImg', is_kitchen(admin_product.loadImg), methods=['POST'])
+
 kitchen_api.add_url_rule('/admin/category', 'adminCategoryCreate', is_kitchen(admin_category.category_create), methods=['POST'])
+kitchen_api.add_url_rule('/admin/category', 'adminCategoryGet', is_kitchen(admin_category.category_list), methods=['GET'])
+kitchen_api.add_url_rule('/admin/category', 'adminCategoryPatch', is_kitchen(admin_category.patchCategory), methods=['PATCH'])
+kitchen_api.add_url_rule('/admin/category', 'adminCategoryDelete', is_kitchen(admin_category.categoryDelete), methods=['DELETE'])
 
 kitchen_api.add_url_rule('/admin/log', 'adminLogGet', is_admin(admin_logs.log_get), methods=['GET'])
 kitchen_api.add_url_rule('/admin/ip', 'getIP', admin_logs.get_ip, methods=['GET'])
