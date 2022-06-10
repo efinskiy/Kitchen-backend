@@ -43,7 +43,7 @@ def new_user():
                 )
             u = db_commit(u)
             return jsonify({
-                'code': 'success',
+                'response': 200,
                 'id': u.id
             })
         else:
@@ -97,7 +97,7 @@ def changePassword():
     
     user = User.query.get(current_user.id)
 
-    if not user.veryfy_password(currentPassword):
+    if not user.verify_password(currentPassword):
         return jsonify(return_kr(kr.BAD_PASSWORD)), 400
     else:
         user.password = generate_password_hash(newPassword)
@@ -105,14 +105,14 @@ def changePassword():
     db_commit(user)
 
     return jsonify({
-        'code': 200
+        'response': 200
     })
 
 def editUser():
     try:
         user = int(request.json['user'])
-        is_kitchen = bool(request.json['is_kitchen'])
         is_admin = bool(request.json['is_admin'])
+        is_kitchen = bool(request.json['is_kitchen'])
         if 'newPassword' in request.json: newPassword = request.json['newPassword']
     except:
         return jsonify(return_kr(kr.PARSE_ERROR)), 400
@@ -135,7 +135,7 @@ def editUser():
     db_commit(user)
 
     return jsonify({
-        'code': 200
+        'response': 200
     })
         
 
@@ -153,12 +153,12 @@ def deleteUser():
         allAdmin = User.query.filter_by(is_admin = True).all()
         if len(allAdmin) == 1:
             return jsonify({
-                'code': 999
+                'response': 999
             })
     
     db.session.delete(deletingUser)
     db.session.commit()
 
     return jsonify({
-        'code': 200
+        'response': 200
     })

@@ -70,6 +70,7 @@ kitchen_api.add_url_rule('/admin/user', 'adminNewUser', is_admin(admin_users.new
 kitchen_api.add_url_rule('/admin/user/all', 'adminAllUsers', is_admin(admin_users.get_users), methods=['GET'])
 kitchen_api.add_url_rule('/admin/user/changePassword', 'adminChangePassword', is_kitchen(admin_users.changePassword), methods=['POST'])
 kitchen_api.add_url_rule('/admin/user/edit', 'adminEditUser', is_admin(admin_users.editUser), methods=['POST'])
+kitchen_api.add_url_rule('/admin/user/delete', 'adminDeleteUser', is_admin(admin_users.deleteUser), methods=['POST'])
 # kitchen_api.add_url_rule('/admin/user/recovery', 'recoveryPOST', is_admin(admin_users.createRecoveryLink), methods=['POST'])
 kitchen_api.add_url_rule('/admin/whoami', 'whoami', admin_users.whoami, methods=['GET'])
 
