@@ -172,3 +172,4 @@ cython_debug/
 application/api/payments/config.py
 application/configuration.py
 application/product_imgs/*
+flask_monitoringdashboard.db

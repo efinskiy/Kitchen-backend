@@ -29,32 +29,37 @@ def product_create():
         product_name = request.json['name']
         new_product.name = product_name
     else:
-        return jsonify(return_kr(kr.PARSE_ERROR))
+        return jsonify(return_kr(kr.PARSE_ERROR)), 400
     
     if 'price' in request.json:
         try:
             product_price = float(request.json['price'])
             new_product.price = product_price
         except:
-            return jsonify(return_kr(kr.PARSE_ERROR))
+            return jsonify(return_kr(kr.PARSE_ERROR)), 400
     else:
-        return jsonify(return_kr(kr.PARSE_ERROR))
+        return jsonify(return_kr(kr.PARSE_ERROR)), 400
     
     if 'category' in request.json:
         try:
             product_category = int(request.json['category'])
             new_product.category_id = product_category
         except:
-            return jsonify(return_kr(kr.PARSE_ERROR))
+            return jsonify(return_kr(kr.PARSE_ERROR)), 400
     else:
-        return jsonify(return_kr(kr.PARSE_ERROR))
+        return jsonify(return_kr(kr.PARSE_ERROR)), 400
     
     try:
         if 'weight' in request.json: new_product.weight = int(request.json['weight'])
-        if 'img' in request.json: new_product.img = request.json['img']
+        if 'img' in request.json:
+            if request.json['img'] == "":
+                new_product.img = "placeholder-image.png"
+            else:
+                new_product.img = request.json['img']
+        else: new_product.img = "placeholder-image.png"
         if 'balance' in request.json: new_product.balance = request.json['balance']
     except:
-        return jsonify(return_kr(kr.PARSE_ERROR))
+        return jsonify(return_kr(kr.PARSE_ERROR)), 400
     
     new_product = db_commit(new_product)
 

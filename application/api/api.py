@@ -65,8 +65,12 @@ kitchen_api.add_url_rule('/order/pay', 'orderPay', client_order.getPaymentLink, 
 # ADMIN API
 kitchen_api.add_url_rule('/admin/login', 'adminLogin', admin_auth.login, methods=['POST'])
 kitchen_api.add_url_rule('/admin/logout', 'adminLogout', is_kitchen(admin_auth.logout), methods=['POST'])
+
 kitchen_api.add_url_rule('/admin/user', 'adminNewUser', is_admin(admin_users.new_user), methods=['POST'])
-kitchen_api.add_url_rule('/admin/user/recovery', 'recoveryPOST', is_admin(admin_users.createRecoveryLink), methods=['POST'])
+kitchen_api.add_url_rule('/admin/user/all', 'adminAllUsers', is_admin(admin_users.get_users), methods=['GET'])
+kitchen_api.add_url_rule('/admin/user/changePassword', 'adminChangePassword', is_kitchen(admin_users.changePassword), methods=['POST'])
+kitchen_api.add_url_rule('/admin/user/edit', 'adminEditUser', is_admin(admin_users.editUser), methods=['POST'])
+# kitchen_api.add_url_rule('/admin/user/recovery', 'recoveryPOST', is_admin(admin_users.createRecoveryLink), methods=['POST'])
 kitchen_api.add_url_rule('/admin/whoami', 'whoami', admin_users.whoami, methods=['GET'])
 
 kitchen_api.add_url_rule('/admin/settings', 'settingsGet', is_kitchen(admin_settings.settingsGet), methods=['GET'])
