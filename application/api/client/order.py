@@ -131,6 +131,14 @@ def orderCancel():
     if order.customer_id != userId:
         return jsonify(return_kr(kr.NOT_ENOUGH_PERMISSIONS))
 
+
+    if order.status == status.wait_for_recieve:
+        orderItems = json.loads(order.items.replace("'", '"'))
+        for k, v in orderItems.items():
+                    i = Menu.query.get(int(k))
+                    i.reserved -= int(v)
+                    db_commit(i)
+
     order.status = status.canceled
     order.cancelReason = cancelReason.id
 

@@ -47,7 +47,7 @@ def getBalance():
 
     if i:= Menu.query.filter_by(id=product).first():
         return jsonify({
-            'amount': i.balance
+            'amount': i.balance-i.reserved
         })
     else:
         return jsonify(return_kr(kr.EMPTY))
@@ -88,15 +88,20 @@ def addProductToBasket():
     except:
         return jsonify(return_kr(kr.PARSE_ERROR))
 
-    if item := Menu.query.filter_by(id=product).first(): pass
-    else: return jsonify(return_kr(kr.PARSE_ERROR))
+    if item := Menu.query.filter_by(id=product).first(): 
+        pass
+    else: 
+        return jsonify(return_kr(kr.PARSE_ERROR))
 
     customer = Customer.query.filter_by(id=userId).first()
 
-    if item.balance < amount: return jsonify(return_kr(kr.NOT_ENOUGH))
+    if item.balance-item.reserved < amount: 
+        return jsonify(return_kr(kr.NOT_ENOUGH))
+
     b = Basket.query.filter_by(cust_id=customer.id, item=item.id).first()
+    
     if b:
-        if (b.amount + amount) > (item.balance): return jsonify(return_kr(kr.NOT_ENOUGH))
+        if (b.amount + amount) > (item.balance-item.reserved): return jsonify(return_kr(kr.NOT_ENOUGH))
         b.amount += amount
         db_commit(b)
         return jsonify({'new_amount': b.amount})

@@ -75,7 +75,7 @@ def cancelOrder():
         orderItems = json.loads(order.items.replace("'", '"'))
         for k, v in orderItems.items():
                     i = Menu.query.get(int(k))
-                    i.balance += int(v)
+                    i.reserved -= int(v)
                     db_commit(i)
 
     cancelReason = CancelReason.query.get(reason)
@@ -103,12 +103,12 @@ def confirmOrder():
     orderItems = json.loads(order.items.replace("'", '"'))
     
     for k, v in orderItems.items():
-                i = Menu.query.get(int(k))
-                if i.balance - int(v) < 0 : lowBalance.append({
-                    'item': i,
-                    'before': i.balance + int(v),
-                    'after': i.balance
-                })
+        i = Menu.query.get(int(k))
+        if (i.balance-i.reserved) - int(v) < 0 : lowBalance.append({
+            'item': i,
+            'before': i.balance-i.reserved,
+            'after': (i.balance-i.reserved) - int(v)
+        })
     
     if lowBalance:
         order.status = status.canceled
@@ -127,14 +127,9 @@ def confirmOrder():
         })
     
     for k, v in orderItems.items():
-                i = Menu.query.get(int(k))
-                i.balance -= int(v)
-                if i.balance < 0 : lowBalance.append({
-                    'item': i,
-                    'before': i.balance + int(v),
-                    'after': i.balance
-                })
-                db.session.add(i)
+        i = Menu.query.get(int(k))
+        i.reserved += int(v)
+        db.session.add(i)
     
     db.session.commit()
     
@@ -161,7 +156,10 @@ def closeOrder():
     
     # increase selled value by item in order
     for item in productItems:
-        item[0].sells =+ int(item[1])
+        item[0].sells += int(item[1])
+        item[0].balance -= int(item[0].reserved)
+        item[0].reserved -= int(item[1])
+
         db.session.add(item[0])
     
     db_commit(order) # this commit also commits productItems sells changes
